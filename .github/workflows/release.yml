@@ -1,0 +1,27 @@
+name: Release a producción
+on:
+  push:
+    tags: ['v*.*.*']
+permissions:
+  contents: read
+concurrency:
+  group: produccion
+  cancel-in-progress: false
+jobs:
+  produccion:
+    runs-on: ubuntu-latest
+    environment: production   # Repos privados con plan Free: borrar esta línea (ADR-0006 de la consultora).
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: bash scripts/correr-comando.sh INSTALAR opcional
+      - name: Desplegar
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: bash scripts/correr-comando.sh DEPLOY_PRODUCCION
+      - name: Smoke
+        env:
+          ENTORNO: produccion
+        run: bash scripts/correr-comando.sh SMOKE

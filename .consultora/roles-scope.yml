@@ -1,0 +1,38 @@
+# Rutas que puede tocar cada rol (ADR-0002, decisión 4). Formato acotado: "rol:" y debajo "  - glob".
+# Globs: ** = cualquier cantidad de carpetas · * = un nombre dentro de una carpeta · ? = un carácter.
+pm:
+  - docs/requerimientos/vision.md
+  - docs/diseno/**
+  - docs/adr/**
+  - docs/retros/**
+  - .consultora/roles/**
+  - .consultora/roles-scope.yml
+  - .consultora/version
+  - .consultora/automatizaciones/**
+  - .claude/skills/**
+  - AGENTS.md
+  - CLAUDE.md
+  - README.md
+arquitecto:
+  - docs/diseno/**
+  - docs/adr/**
+analista:
+  - docs/requerimientos/**
+  - docs/analisis/**
+dev:
+  - src/**
+  - tests/unit/**
+  - tests/integration/**
+  - package.json
+  - package-lock.json
+qa:
+  - tests/acceptance/**
+  - tests/e2e/**
+revisor: []
+devops:
+  - .github/**
+  - scripts/**
+  - .consultora/comandos.env
+  - Dockerfile
+  - .gitignore
+  - .gitattributes

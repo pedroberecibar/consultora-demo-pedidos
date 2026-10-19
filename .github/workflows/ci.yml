@@ -1,0 +1,40 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  calidad:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Scripts de la consultora
+        run: node --test "scripts/**/*.test.mjs"
+      # La plantilla no tiene código de producto: los comandos del proyecto se exigen solo en repos que no son plantilla.
+      - name: Instalar dependencias
+        if: ${{ !github.event.repository.is_template }}
+        run: bash scripts/correr-comando.sh INSTALAR opcional
+      - name: Formato
+        if: ${{ !github.event.repository.is_template }}
+        run: bash scripts/correr-comando.sh FORMATO_CHECK
+      - name: Linter
+        if: ${{ !github.event.repository.is_template }}
+        run: bash scripts/correr-comando.sh LINT
+      - name: Tipos
+        if: ${{ !github.event.repository.is_template }}
+        run: bash scripts/correr-comando.sh TIPOS opcional
+      - name: Tests (unitarias y aceptación)
+        if: ${{ !github.event.repository.is_template }}
+        run: bash scripts/correr-comando.sh TESTS
+      - name: Tests de integración
+        if: ${{ !github.event.repository.is_template }}
+        run: bash scripts/correr-comando.sh TESTS_INTEGRACION opcional
+      - name: Cobertura (informativa)
+        if: ${{ !github.event.repository.is_template }}
+        continue-on-error: true
+        run: bash scripts/correr-comando.sh COBERTURA opcional >> "$GITHUB_STEP_SUMMARY"

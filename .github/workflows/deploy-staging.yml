@@ -1,0 +1,24 @@
+name: Deploy a staging
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: staging
+  cancel-in-progress: false
+jobs:
+  staging:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: bash scripts/correr-comando.sh INSTALAR opcional
+      - name: Desplegar
+        run: bash scripts/correr-comando.sh DEPLOY_STAGING opcional
+      - name: Smoke
+        env:
+          ENTORNO: staging
+        run: bash scripts/correr-comando.sh SMOKE opcional

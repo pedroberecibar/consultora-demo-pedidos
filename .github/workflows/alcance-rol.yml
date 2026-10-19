@@ -1,0 +1,26 @@
+name: Alcance por rol
+# pull_request_target: el workflow, el script y roles-scope.yml salen de la rama base, así que un PR no puede ablandar
+# su propio chequeo. Es seguro porque nunca se ejecuta código del PR: solo se leen sus labels y la lista de archivos.
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+permissions:
+  contents: read
+  pull-requests: read
+jobs:
+  alcance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Datos del PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: gh pr view "$PR" --repo "$GITHUB_REPOSITORY" --json labels,files > "$RUNNER_TEMP/pr.json"
+      - name: Verificar el alcance del rol
+        run: node scripts/alcance-rol.mjs "$RUNNER_TEMP/pr.json" .consultora/roles-scope.yml
