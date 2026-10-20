@@ -11,12 +11,14 @@ jobs:
   alcance:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.base.sha }}
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
+          # Con pull_request_target no se usa caché de dependencias: evita el envenenamiento de caché.
+          package-manager-cache: false
       - name: Datos del PR
         env:
           GH_TOKEN: ${{ github.token }}
